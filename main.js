@@ -513,10 +513,13 @@ async function showSavedFilenames() {
 // ── Hint Toast ──
 const HINTS = [
   "💡 Write your essays and lock in with adaptive music.",
-  "💡 Upload your favorite boss-fight tracks for Beast Mode.",
-  "💡 Type faster to smoothly transition to higher gears.",
-  "💡 Calibrate your speed in Settings for the perfect flow.",
-  "💡 Drop in your favorite beats and enter the zone."
+  "💡 Code at warp speed with synthwave backing you up.",
+  "💡 Power through your inbox and emails to a high-BPM track.",
+  "💡 Draft the climax of your novel to epic cinematic boss music.",
+  "💡 Spitfire your thoughts into a daily journal and find your flow.",
+  "💡 Turn boring data entry into a high-stakes gaming experience.",
+  "💡 Transcribe study notes while staying deeply in the zone.",
+  "💡 Upload your own favorite tracks in the Settings (⚙) menu."
 ];
 let currentHint = 0;
 const hintToast = document.getElementById('hint-toast');
