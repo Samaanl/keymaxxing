@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>KeyMaxxing</title>
+  <meta name="description" content="Your typing speed controls the music intensity." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+
+  <!-- Settings Panel -->
+  <div id="settings-overlay" class="settings-overlay hidden"></div>
+  <aside id="settings-panel" class="settings-panel">
+    <div class="settings-header">
+      <h2>Settings</h2>
+      <button id="close-settings" class="icon-btn" aria-label="Close">✕</button>
+    </div>
+
+    <div class="settings-body">
+      <!-- Speed Tiers -->
+      <section class="setting-group">
+        <h3>Speed Tiers</h3>
+        <p class="setting-desc">Set the WPM boundaries for each gear.</p>
+
+        <div class="tier-config">
+          <div class="tier-row">
+            <span class="tier-dot" style="background:#3b82f6"></span>
+            <span class="tier-label">Thinking</span>
+            <span class="tier-bounds">0 –</span>
+            <input type="number" id="threshold-1" class="tier-input" min="5" max="100" value="15" />
+            <span class="tier-bounds-unit">WPM</span>
+          </div>
+          <div class="tier-row">
+            <span class="tier-dot" style="background:#8b5cf6"></span>
+            <span class="tier-label">Cruising</span>
+            <span class="tier-bounds" id="cruise-start">15 –</span>
+            <input type="number" id="threshold-2" class="tier-input" min="20" max="200" value="55" />
+            <span class="tier-bounds-unit">WPM</span>
+          </div>
+          <div class="tier-row">
+            <span class="tier-dot" style="background:#f97316"></span>
+            <span class="tier-label">Beast Mode</span>
+            <span class="tier-bounds" id="beast-start">55+</span>
+            <span class="tier-bounds-unit">WPM</span>
+          </div>
+        </div>
+
+        <button id="start-test-btn" class="btn-secondary">⏱ Calibrate with a 15s Typing Test</button>
+      </section>
+
+      <!-- Test -->
+      <section id="test-section" class="setting-group test-section hidden">
+        <p class="test-prompt" id="test-prompt"></p>
+        <textarea id="test-input" placeholder="Start typing here..." rows="3"></textarea>
+        <div class="test-status">
+          <span id="test-timer">15s</span>
+          <span id="test-result"></span>
+        </div>
+      </section>
+
+      <!-- Music (Collapsible) -->
+      <section class="setting-group">
+        <button class="collapse-toggle" id="music-toggle">
+          <span class="collapse-left">
+            <span class="collapse-icon" id="music-icon">▶</span>
+            <h3>Music</h3>
+          </span>
+          <span class="collapse-hint">Click to expand</span>
+        </button>
+
+        <div class="collapse-content hidden" id="music-content">
+          <p class="setting-desc">Upload an MP3 for each phase. Only the active phase plays. Drag the markers on the waveform to set your loop section.</p>
+
+          <div class="music-slot" id="slot-thinking" data-phase="thinking">
+            <div class="slot-top-row">
+              <div class="slot-header">
+                <span class="slot-dot" style="background:#3b82f6"></span>
+                <span class="slot-name">Thinking</span>
+              </div>
+              <div class="slot-upload">
+                <label class="upload-btn"><input type="file" accept="audio/*" data-phase="thinking" class="file-input" hidden />Choose File</label>
+                <span class="slot-filename" data-phase="thinking">No file</span>
+              </div>
+            </div>
+            <p class="slot-rec">Try: <em>"Snowfall"</em> — Øneheart & Reidenshi</p>
+            <div class="waveform-editor hidden" data-phase="thinking">
+              <div class="waveform-wrap">
+                <canvas class="waveform-canvas" data-phase="thinking"></canvas>
+                <div class="wf-handle wf-handle-start" data-phase="thinking" data-bound="start"></div>
+                <div class="wf-handle wf-handle-end" data-phase="thinking" data-bound="end"></div>
+                <div class="wf-selection" data-phase="thinking"></div>
+                <div class="wf-playhead" data-phase="thinking"></div>
+              </div>
+              <div class="wf-info">
+                <span class="wf-time" data-phase="thinking" data-bound="start">0.0s</span>
+                <button class="wf-preview-btn" data-phase="thinking">▶ Preview</button>
+                <span class="wf-time" data-phase="thinking" data-bound="end">0.0s</span>
+              </div>
+              <div class="slot-vol-wrap">
+                <label>Vol</label>
+                <input type="range" class="slot-vol" data-phase="thinking" min="0" max="200" value="100">
+                <span class="slot-vol-val" data-phase="thinking">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="music-slot" id="slot-cruising" data-phase="cruising">
+            <div class="slot-top-row">
+              <div class="slot-header">
+                <span class="slot-dot" style="background:#8b5cf6"></span>
+                <span class="slot-name">Cruising</span>
+              </div>
+              <div class="slot-upload">
+                <label class="upload-btn"><input type="file" accept="audio/*" data-phase="cruising" class="file-input" hidden />Choose File</label>
+                <span class="slot-filename" data-phase="cruising">No file</span>
+              </div>
+            </div>
+            <p class="slot-rec">Try: <em>"Close Eyes"</em> — DVRST</p>
+            <div class="waveform-editor hidden" data-phase="cruising">
+              <div class="waveform-wrap">
+                <canvas class="waveform-canvas" data-phase="cruising"></canvas>
+                <div class="wf-handle wf-handle-start" data-phase="cruising" data-bound="start"></div>
+                <div class="wf-handle wf-handle-end" data-phase="cruising" data-bound="end"></div>
+                <div class="wf-selection" data-phase="cruising"></div>
+                <div class="wf-playhead" data-phase="cruising"></div>
+              </div>
+              <div class="wf-info">
+                <span class="wf-time" data-phase="cruising" data-bound="start">0.0s</span>
+                <button class="wf-preview-btn" data-phase="cruising">▶ Preview</button>
+                <span class="wf-time" data-phase="cruising" data-bound="end">0.0s</span>
+              </div>
+              <div class="slot-vol-wrap">
+                <label>Vol</label>
+                <input type="range" class="slot-vol" data-phase="cruising" min="0" max="200" value="100">
+                <span class="slot-vol-val" data-phase="cruising">100%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="music-slot" id="slot-beast" data-phase="beast">
+            <div class="slot-top-row">
+              <div class="slot-header">
+                <span class="slot-dot" style="background:#f97316"></span>
+                <span class="slot-name">Beast Mode</span>
+              </div>
+              <div class="slot-upload">
+                <label class="upload-btn"><input type="file" accept="audio/*" data-phase="beast" class="file-input" hidden />Choose File</label>
+                <span class="slot-filename" data-phase="beast">No file</span>
+              </div>
+            </div>
+            <p class="slot-rec">Try: <em>"Can You Feel My Heart"</em> — BMTH</p>
+            <div class="waveform-editor hidden" data-phase="beast">
+              <div class="waveform-wrap">
+                <canvas class="waveform-canvas" data-phase="beast"></canvas>
+                <div class="wf-handle wf-handle-start" data-phase="beast" data-bound="start"></div>
+                <div class="wf-handle wf-handle-end" data-phase="beast" data-bound="end"></div>
+                <div class="wf-selection" data-phase="beast"></div>
+                <div class="wf-playhead" data-phase="beast"></div>
+              </div>
+              <div class="wf-info">
+                <span class="wf-time" data-phase="beast" data-bound="start">0.0s</span>
+                <button class="wf-preview-btn" data-phase="beast">▶ Preview</button>
+                <span class="wf-time" data-phase="beast" data-bound="end">0.0s</span>
+              </div>
+              <div class="slot-vol-wrap">
+                <label>Vol</label>
+                <input type="range" class="slot-vol" data-phase="beast" min="0" max="200" value="100">
+                <span class="slot-vol-val" data-phase="beast">100%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Volume -->
+      <section class="setting-group">
+        <h3>Volume</h3>
+        <input type="range" id="volume-slider" min="0" max="100" value="70" />
+        <div class="range-labels">
+          <span>0%</span>
+          <span id="volume-value">70%</span>
+          <span>100%</span>
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <!-- Main UI -->
+  <div id="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="logo">key<span class="logo-accent">maxxing</span></span>
+      </div>
+      <div class="topbar-center">
+        <div class="wpm-display">
+          <span class="wpm-number" id="wpm-display">0</span>
+          <span class="wpm-unit">WPM</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="open-settings" class="icon-btn" aria-label="Settings">⚙</button>
+      </div>
+    </header>
+
+    <div class="intensity-strip">
+      <div class="intensity-fill" id="intensity-fill"></div>
+    </div>
+
+    <div class="layer-pills">
+      <span class="pill" id="pill-thinking">Thinking</span>
+      <span class="pill" id="pill-cruising">Cruising</span>
+      <span class="pill" id="pill-beast">Beast Mode</span>
+    </div>
+
+    <main class="main-area">
+      <div class="input-wrapper">
+        <textarea id="typing-input" placeholder="Start typing anything..." spellcheck="false" autofocus></textarea>
+        <div id="init-overlay" class="init-overlay">
+          <span>Type any key to get started</span>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bottombar">
+      <span id="char-count">0 chars</span>
+      <span class="now-playing" id="now-playing">Upload music in ⚙ settings</span>
+      <span id="word-count">0 words</span>
+    </footer>
+
+    <div class="bg-glow" id="bg-glow"></div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+
+</html>
