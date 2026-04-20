@@ -510,5 +510,29 @@ async function showSavedFilenames() {
   }
 }
 
+// ── Hint Toast ──
+const HINTS = [
+  "💡 Write your essays and lock in with adaptive music.",
+  "💡 Upload your favorite boss-fight tracks for Beast Mode.",
+  "💡 Type faster to smoothly transition to higher gears.",
+  "💡 Calibrate your speed in Settings for the perfect flow.",
+  "💡 Drop in your favorite beats and enter the zone."
+];
+let currentHint = 0;
+const hintToast = document.getElementById('hint-toast');
+
+function cycleHints() {
+  if (!hintToast) return;
+  hintToast.classList.remove('show');
+  setTimeout(() => {
+    currentHint = (currentHint + 1) % HINTS.length;
+    hintToast.textContent = HINTS[currentHint];
+    hintToast.classList.add('show');
+  }, 1000); // Wait for fade out
+}
+
+setTimeout(() => { if (hintToast) hintToast.classList.add('show'); }, 1000);
+setInterval(cycleHints, 8000);
+
 loadSettings(); setupHandleDragging(); showSavedFilenames(); typingInput.focus();
-console.log('keymaxxing v5 — waveform editor loaded');
+console.log('PixRecall v5 — waveform editor loaded');
