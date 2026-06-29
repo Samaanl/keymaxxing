@@ -37,7 +37,7 @@ export function LandingScreen({
   const tapSecret = () => {
     setTaps((t) => {
       const n = t + 1;
-      if (n >= 5) {
+      if (n >= 20) {
         setShowCode(true);
         return 0;
       }

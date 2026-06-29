@@ -38,6 +38,21 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, []);
 
+  // Unlock the AudioContext + start music on the FIRST user interaction anywhere
+  // (a fresh AudioContext starts "suspended" on real browsers — esp. mobile —
+  // and only resumes inside a user gesture). Cheap + idempotent once running.
+  useEffect(() => {
+    const kick = () => {
+      void engine.current.unlock().then(() => {
+        if (!engine.current.isMusicPlaying) engine.current.startMusic();
+      });
+    };
+    const opts = { capture: true } as AddEventListenerOptions;
+    const events = ["pointerdown", "touchend", "click", "keydown"];
+    events.forEach((e) => window.addEventListener(e, kick, opts));
+    return () => events.forEach((e) => window.removeEventListener(e, kick, opts));
+  }, []);
+
   const api: AudioApi = {
     muted,
     setMuted: (m) => {

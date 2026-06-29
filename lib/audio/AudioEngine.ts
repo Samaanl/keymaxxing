@@ -20,6 +20,7 @@ export class AudioEngine {
   private nextNoteTime = 0;
   private step = 0;
   private noiseBuffer: AudioBuffer | null = null;
+  private silentDone = false;
 
   private ensure(): AudioContext {
     if (this.ctx) return this.ctx;
@@ -47,16 +48,26 @@ export class AudioEngine {
     return ctx;
   }
 
-  /** Call from a user gesture (e.g. PLAY). */
+  /** Call from a user gesture (any tap/click/key). Idempotent + cheap once running. */
   async unlock(): Promise<void> {
     const ctx = this.ensure();
-    if (ctx.state === "suspended") {
-      try {
-        await ctx.resume();
-      } catch {
-        /* ignore */
+    try {
+      if (ctx.state !== "running") await ctx.resume();
+      // iOS/Safari needs an actual sound played inside the gesture to unlock.
+      if (!this.silentDone && ctx.state === "running") {
+        const src = ctx.createBufferSource();
+        src.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+        src.connect(ctx.destination);
+        src.start(0);
+        this.silentDone = true;
       }
+    } catch {
+      /* ignore */
     }
+  }
+
+  get isRunning(): boolean {
+    return this.ctx?.state === "running";
   }
 
   setMuted(m: boolean): void {

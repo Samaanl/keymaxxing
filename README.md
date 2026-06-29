@@ -79,7 +79,7 @@ public/images/  the 5 drooling-cat memes (level1..level5)
 
 For testing end-game features (share card, grades, etc.) without grinding:
 
-1. On the landing screen, **tap the bottom-right corner 5 times** (invisible hotspot).
+1. On the landing screen, **tap the bottom-right corner 20 times** (invisible hotspot).
 2. Enter the access code **`DROOL`**.
 
 A green **DEV MODE** badge appears (tap it to turn off). While dev mode is on:
