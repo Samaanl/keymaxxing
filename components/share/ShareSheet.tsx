@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import { pixelFont, termFont } from "@/app/fonts";
 import {
-  buildEmojiResults,
-  copyText,
+  copyImage,
   downloadBlob,
-  nativeShare,
+  nativeShareImage,
+  openXCompose,
   renderScoreCard,
-  tweetIntent,
 } from "@/lib/share";
 import type { Grade } from "@/lib/scoring";
 import { PixelButton } from "@/components/ui/PixelButton";
@@ -30,8 +29,6 @@ export function ShareSheet(props: Props) {
   const [url, setUrl] = useState<string | null>(null);
   const [blob, setBlob] = useState<Blob | null>(null);
   const [status, setStatus] = useState("");
-
-  const emoji = buildEmojiResults({ subtitle, timeText, accuracy, grade, stars });
 
   useEffect(() => {
     let alive = true;
@@ -61,7 +58,7 @@ export function ShareSheet(props: Props) {
 
   const flash = (msg: string) => {
     setStatus(msg);
-    setTimeout(() => setStatus(""), 1800);
+    setTimeout(() => setStatus(""), 2200);
   };
 
   return (
@@ -83,14 +80,14 @@ export function ShareSheet(props: Props) {
           onClick={async () => {
             if (!blob) return;
             onShareTrack?.();
-            const ok = await nativeShare(blob, emoji);
+            const ok = await nativeShareImage(blob);
             if (!ok) {
-              const copied = await copyText(emoji);
-              flash(copied ? "Copied results!" : "Use Save / X instead");
+              const copied = await copyImage(blob);
+              flash(copied ? "Image copied to clipboard" : "Use Save PNG instead");
             }
           }}
         >
-          📤 Share
+          📤 Share PNG
         </PixelButton>
         <PixelButton
           variant="plain"
@@ -104,24 +101,30 @@ export function ShareSheet(props: Props) {
         </PixelButton>
         <PixelButton
           variant="plain"
+          disabled={!blob}
           onClick={async () => {
-            const ok = await copyText(emoji);
-            flash(ok ? "Copied!" : "Copy failed");
+            if (!blob) return;
+            const ok = await copyImage(blob);
+            flash(ok ? "Image copied!" : "Copy not supported — use Save PNG");
           }}
         >
-          📋 Copy
+          📋 Copy PNG
         </PixelButton>
         <PixelButton
           variant="plain"
-          onClick={() => {
+          disabled={!blob}
+          onClick={async () => {
+            if (!blob) return;
             onShareTrack?.();
-            window.open(tweetIntent(emoji), "_blank", "noopener,noreferrer");
+            openXCompose(); // open synchronously (avoids popup blocker)
+            const ok = await copyImage(blob);
+            flash(ok ? "PNG copied — paste into X (Ctrl/⌘+V)" : "Save the PNG, then attach it on X");
           }}
         >
           𝕏 Post
         </PixelButton>
       </div>
-      <p className="h-4 font-term text-sm uppercase text-good">{status}</p>
+      <p className="h-4 px-2 text-center font-term text-sm uppercase text-good">{status}</p>
     </div>
   );
 }

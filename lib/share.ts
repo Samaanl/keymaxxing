@@ -19,25 +19,6 @@ export function shareUrl(): string {
   return BRAND.url;
 }
 
-/** Wordle-style copy/paste summary. */
-export function buildEmojiResults(opts: {
-  subtitle: string;
-  timeText: string;
-  accuracy: number;
-  grade: Grade;
-  stars: number;
-}): string {
-  const filled = Math.round(opts.accuracy * 10);
-  const bar = "🟩".repeat(filled) + "🟥".repeat(10 - filled);
-  const stars = opts.stars > 0 ? "\n" + "⭐".repeat(opts.stars) : "";
-  return (
-    `${BRAND.name} — ${opts.subtitle}\n` +
-    `⏱ ${opts.timeText}  🎯 ${Math.round(opts.accuracy * 100)}%  🏆 ${opts.grade}\n` +
-    `${bar}${stars}\n` +
-    `Can you beat it? ${shareUrl()}`
-  );
-}
-
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -170,23 +151,38 @@ export async function renderScoreCard(opts: ScoreCardOpts): Promise<Blob> {
   );
 }
 
-export async function nativeShare(blob: Blob, text: string): Promise<boolean> {
-  const url = shareUrl();
+/** Share ONLY the PNG image (no text) via the native share sheet. */
+export async function nativeShareImage(blob: Blob): Promise<boolean> {
   try {
     const file = new File([blob], "pixrecall.png", { type: "image/png" });
     const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
     if (nav.canShare && nav.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], text, title: BRAND.name } as ShareData);
-      return true;
-    }
-    if (navigator.share) {
-      await navigator.share({ text, url, title: BRAND.name });
+      await navigator.share({ files: [file], title: BRAND.name } as ShareData);
       return true;
     }
   } catch {
     /* user cancelled or unsupported */
   }
   return false;
+}
+
+/** Copy the PNG image itself to the clipboard. */
+export async function copyImage(blob: Blob): Promise<boolean> {
+  try {
+    if (navigator.clipboard && typeof window !== "undefined" && "ClipboardItem" in window) {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      return true;
+    }
+  } catch {
+    /* not supported / blocked */
+  }
+  return false;
+}
+
+/** X (Twitter) can't attach an image via URL — open an empty composer so the
+ * user can paste the image we copied to their clipboard. */
+export function openXCompose(): void {
+  window.open("https://twitter.com/intent/tweet", "_blank", "noopener,noreferrer");
 }
 
 export function downloadBlob(blob: Blob, filename = "pixrecall.png"): void {
@@ -198,17 +194,4 @@ export function downloadBlob(blob: Blob, filename = "pixrecall.png"): void {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-export async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function tweetIntent(text: string): string {
-  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 }

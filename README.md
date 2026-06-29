@@ -39,8 +39,15 @@ Requires Node 18.18+ (built/tested on Node 22).
 
 This is a zero-config static Next.js app — **no env vars required**.
 
-1. Push this `game/` folder to a GitHub repo (or run `vercel` from this folder).
+1. Push this folder to a GitHub repo (it is the repo root — `package.json` is here) or run `vercel`.
 2. Import it on [vercel.com](https://vercel.com) → Framework preset **Next.js** → Deploy.
+
+A `vercel.json` pins the framework to `nextjs`, so Vercel builds with `next build` (output `.next`).
+
+> **If you saw `No Output Directory named "dist" found`:** Vercel's Framework Preset was set to
+> "Other" (which expects a `dist/` folder). The included `vercel.json` fixes this — just redeploy.
+> If it persists, open **Settings → Build & Output Settings** and set **Framework Preset = Next.js**
+> and leave **Output Directory** on its default (empty), then redeploy.
 
 That's it. The 5 images live in `public/images/` and are precached by the service worker.
 

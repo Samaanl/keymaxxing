@@ -16,6 +16,8 @@ const nextConfig = {
   reactStrictMode: true,
   // ESLint isn't configured for this project; TypeScript stays the safety net.
   eslint: { ignoreDuringBuilds: true },
+  // Hide the floating Next.js dev indicator ("N" badge) — it's dev-only anyway.
+  devIndicators: false,
 };
 
 export default withPWA(nextConfig);
