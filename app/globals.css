@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #cfccbe;
+  --panel: #e7e4d7;
+  --ink: #181820;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: none;
+  overscroll-behavior: none;
+  /* faint paper texture under the scanlines */
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+/* prevent iOS double-tap zoom on interactive elements */
+button {
+  touch-action: manipulation;
+}
+
+@layer components {
+  /* raised bevel (light top-left, dark bottom-right) */
+  .bevel {
+    box-shadow: inset 2px 2px 0 #fffdf5, inset -2px -2px 0 #8b8675;
+  }
+  /* sunken bevel */
+  .bevel-in {
+    box-shadow: inset -2px -2px 0 #fffdf5, inset 2px 2px 0 #8b8675;
+  }
+  .btn-press:active {
+    transform: translate(1px, 1px);
+  }
+}
+
+/* full-screen CRT scanline overlay */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.05) 0px,
+    rgba(0, 0, 0, 0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* hide scrollbars in the game frame but keep scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
