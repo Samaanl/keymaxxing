@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     icon: "/icons/icon-192.png",
     apple: "/icons/icon-192.png",
   },
+  other: {
+    "google-adsense-account": "ca-pub-9634042446169790",
+  },
 };
 
 export const viewport: Viewport = {
