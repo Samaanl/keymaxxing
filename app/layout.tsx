@@ -39,6 +39,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-term antialiased">
         <AudioProvider>{children}</AudioProvider>
         <div className="crt-overlay" aria-hidden />
+        {/* Google AdSense — Auto ads loader */}
+        <Script
+          id="adsbygoogle-init"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9634042446169790"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         {/* GoatCounter — pageview analytics (site code: pix) */}
         <Script
           data-goatcounter="https://pix.goatcounter.com/count"
